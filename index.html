@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteTorrent — Легендарная Библиотека</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #7f8c8d;
+            --card-border: #e1e8e5;
+            --header-bg: #2ecc71;
+            --header-text: #ffffff;
+            --panel-bg: #ffffff;
+            --accent: #2ecc71;
+        }
+
+        .dark-theme {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-muted: #aaaaaa;
+            --card-border: #333333;
+            --panel-bg: #1e1e1e;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: 0.3s; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', sans-serif;
+            padding-top: 100px;
+            overflow-x: hidden;
+        }
+
+        header {
+            position: fixed; top: 0; width: 100%; height: 80px;
+            background: var(--header-bg);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 5%; z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-logo { height: 60px; width: auto; cursor: pointer; user-select: none; }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .settings-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .user-pill { background: white; color: #2ecc71; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; }
+
+        #terminalOverlay {
+            position: fixed; top: 80px; left: -100%; width: 250px; height: calc(100% - 80px);
+            background: rgba(0,0,0,0.9); color: #00ff00; font-family: 'Courier New', monospace;
+            font-size: 10px; padding: 10px; z-index: 998; overflow: hidden; white-space: nowrap;
+            border-right: 2px solid #00ff00; transition: 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+        #terminalOverlay.active { left: 0; }
+
+        #secretVideo {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 3000; display: none; background: black;
+        }
+
+        #fullTerminal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; color: #00ff00; font-family: monospace;
+            padding: 20px; z-index: 5000; display: none;
+        }
+        #fullTerminal input {
+            background: none; border: none; color: #00ff00; outline: none;
+            width: 100%; font-family: monospace; font-size: 18px;
+        }
+
+        #osError {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; color: white; z-index: 4000; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            font-family: monospace; text-align: center;
+        }
+        .apple-logo { font-size: 80px; margin-bottom: 20px; }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-card {
+            background: var(--panel-bg); padding: 30px; border-radius: 20px; max-width: 400px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 90%;
+        }
+        
+        .modal-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .btn-download { background: var(--accent); color: white; }
+        .btn-skip { background: #e74c3c; color: white; opacity: 0.8; }
+
+        .library {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px; padding: 20px 5%; max-width: 1400px; margin: 0 auto;
+        }
+
+        .game-card {
+            background: var(--card-bg); border-radius: 12px; border: 1px solid var(--card-border);
+            overflow: hidden; display: flex; flex-direction: column; cursor: pointer; position: relative;
+        }
+        .game-card:hover { transform: translateY(-8px); border-color: #2ecc71; }
+
+        .verified-badge {
+            position: absolute; top: 35px; right: 10px;
+            background: #27ae60; color: white; font-size: 8px;
+            padding: 2px 5px; border-radius: 3px; z-index: 11;
+            border: 1px solid rgba(255,255,255,0.2); font-weight: bold;
+        }
+
+        .cover-wrap { width: 100%; height: 280px; background: #ddd; overflow: hidden; }
+        .cover-img { width: 100%; height: 100%; object-fit: cover; }
+        .game-info { padding: 15px; flex-grow: 1; text-align: center; }
+        h3 { font-size: 14px; line-height: 1.2; font-weight: 600; }
+
+        .settings-panel {
+            position: fixed; top: 80px; right: -300px; width: 300px; height: 100%; 
+            background: var(--panel-bg); z-index: 999; padding: 20px; border-left: 1px solid var(--card-border);
+        }
+        .settings-panel.open { right: 0; }
+
+        .badge { position: absolute; top: 10px; right: 10px; padding: 3px 7px; border-radius: 4px; font-size: 10px; color: white; font-weight: bold; z-index: 10; }
+        .pc { background: #3498db; }
+        .apk { background: #2ecc71; }
+
+        .panel-btn { width: 100%; padding: 12px; margin-bottom: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .theme-btn { background: var(--card-border); color: var(--text-main); }
+        .bot-btn { background: #2ecc71; color: white; margin-top: 20px; }
+    </style>
+</head>
+<body onclick="trackClicks(event)">
+
+<div id="terminalOverlay"></div>
+<video id="secretVideo" src="1000033098.mp4"></video>
+
+<div id="osError">
+    <div id="errorText">No command<br>Operating System not found</div>
+    <div id="iphoneSim" style="display:none;">
+        <div class="apple-logo"></div>
+        <div style="background: rgba(255,0,0,0.2); padding: 20px; border-radius: 10px; border: 1px solid red;">
+            Температура: Критическая
+        </div>
+    </div>
+</div>
+
+<div id="fullTerminal">
+    <div>EliteTorrent Kernel v8.5</div>
+    <br>
+    <div style="display:flex;"><span>admin@elite:~$ &nbsp;</span><input type="text" id="termInput" autofocus></div>
+</div>
+
+<div id="welcomeModal" class="modal-overlay">
+    <div class="modal-card">
+        <h2>Магия P2P 🚀</h2>
+        <p>Для ПК используйте Magnet-ссылки. Для Android рекомендуем <b>Flud</b>.</p>
+        <button class="modal-btn btn-download" onclick="downloadFlud()">✅ Установить Flud (Android)</button>
+        <button class="modal-btn btn-skip" onclick="closeModal()">❌ У меня уже есть клиент</button>
+    </div>
+</div>
+
+<header>
+    <a href="javascript:void(0)" onclick="eggClick()"><img src="logo.jpg" alt="ET" class="main-logo" onerror="this.src='https://via.placeholder.com/60?text=ET'"></a>
+    <div class="header-right">
+        <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+        <div class="user-pill">👤 Admin</div>
+    </div>
+</header>
+
+<div id="settingsPanel" class="settings-panel">
+    <h3>Настройки</h3><br>
+    <button class="panel-btn theme-btn" onclick="toggleTheme()">🌓 Переключить тему</button>
+    <button class="panel-btn bot-btn" onclick="goToBot()">🚀 Заказать / Загрузить игру</button>
+</div>
+
+<main class="library" id="gameGrid"></main>
+
+<script>
+    let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    let eggCounter = 0;
+    let hackActive = false;
+    let fastClicks = 0;
+    let clickTimer;
+    let videoLoops = 0;
+
+    // ОБНОВЛЕННЫЙ СПИСОК (Магнет для CS 1.6 вставлен)
+    const games = [
+        { name: "RED DEAD REDEMPTION 2", img: "rdr2book.jpg", type: "pc", magnet: "", verified: true, pcOnly: true },
+        { name: "RED DEAD REDEMPTION 1", img: "Rdrbook.jpg", type: "pc", magnet: "", verified: true },
+        { name: "RED DEAD REDEMPTION REVOLVER", img: "rdrrbook.jpg", type: "pc", magnet: "", verified: true },
+        { name: "Counter-Strike 2", img: "Cs2book.jpg", type: "pc", magnet: "", verified: true, pcOnly: true },
+        { name: "CS: GO", img: "csgobook.jpg", type: "pc", magnet: "", verified: true, pcOnly: true },
+        { name: "CS: Source", img: "cssbook.jpg", type: "pc", magnet: "", verified: true },
+        { name: "CS: Condition Zero", img: "csczbook.jpg", type: "pc", magnet: "", verified: true },
+        { name: "Counter-Strike 1.6", img: "cs1.6.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:3A09F70D485741634DB82E37B3F0C2DB8A1856C1&dn=Counter-Strike+1.6+Clean+v43&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce", verified: true },
+        { name: "Counter-Strike 1.0", img: "cs1.0.jpg", type: "pc", magnet: "", verified: true },
+        { name: "Half-Life 2", img: "hl2book.jpg", type: "pc", magnet: "", verified: true },
+        { name: "Half-Life 1", img: "hlbook.jpg", type: "pc", magnet: "", verified: true },
+        { name: "GTA V", img: "GtaVbook.png", type: "pc", magnet: "", verified: true, pcOnly: true },
+        { name: "GTA IV", img: "Gtalvbook.png", type: "pc", magnet: "", verified: true, pcOnly: true },
+        { name: "GTA: San Andreas", img: "GtaSabook.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:6188a46f2d22a8435d799008889a7f340f1ca40d", verified: true },
+        { name: "GTA: Vice City Stories", img: "GtaVcsbook.jpg", type: "apk", link: "https://t.me/Send_gameTorrent_bot", verified: true },
+        { name: "GTA: Vice City", img: "gtavcbook.jpg", type: "apk", link: "https://t.me/Send_gameTorrent_bot", verified: true },
+        { name: "GTA III", img: "GtaIIIbook.jpg", type: "apk", link: "https://t.me/Send_gameTorrent_bot", verified: true },
+        { name: "GTA: London", img: "GtaLbook.png", type: "pc", magnet: "", verified: true },
+        { name: "GTA 2", img: "gta2book.jpg", type: "pc", magnet: "", verified: true },
+        { name: "GTA 1", img: "Gta1book.jpg", type: "pc", magnet: "", verified: true },
+        { name: "Minecraft PE", img: "mc.jpg", type: "apk", link: "https://t.me/Send_gameTorrent_bot", verified: true }
+    ];
+
+    const grid = document.getElementById('gameGrid');
+
+    function renderGames() {
+        grid.innerHTML = '';
+        games.forEach(game => {
+            const card = document.createElement('div');
+            card.className = 'game-card';
+            card.onclick = () => startDownload(game);
+            
+            const verifiedTag = game.verified ? `<div class="verified-badge">🛡️ DR.WEB CLEAN</div>` : '';
+
+            card.innerHTML = `
+                <div class="badge ${game.type}">${game.type.toUpperCase()}</div>
+                ${verifiedTag}
+                <div class="cover-wrap">
+                    <img src="${game.img}" alt="${game.name}" class="cover-img" onerror="this.src='https://via.placeholder.com/200x280?text=Elite+P2P'">
+                </div>
+                <div class="game-info"><h3>${game.name}</h3></div>`;
+            grid.appendChild(card);
+        });
+    }
+
+    function startDownload(game) {
+        if (isMobile && game.pcOnly) { alert("Эта игра только для ПК версии."); return; }
+        
+        if (game.type === 'pc') {
+            if (game.magnet) {
+                alert(`💾 Запуск Magnet-ссылки для: ${game.name}`);
+                window.location.href = game.magnet;
+            } else { goToBot(); }
+        } else {
+            if (game.link) { window.open(game.link, "_blank"); } else { goToBot(); }
+        }
+    }
+
+    function eggClick() { if(hackActive) return; eggCounter++; if (eggCounter >= 10) startHack(); }
+    function trackClicks(e) {
+        if(!hackActive) return;
+        fastClicks++;
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => { fastClicks = 0; }, 1000);
+        if(fastClicks >= 5) { fastClicks = 0; triggerSystemFailure(); }
+    }
+    function startHack() {
+        hackActive = true;
+        const term = document.getElementById('terminalOverlay');
+        term.classList.add('active');
+        term.innerHTML = "> Bypassing Dr.Web...<br>> Memory unlocked...<br>> HACK COMPLETED";
+        isMobile = false; 
+    }
+    function triggerSystemFailure() {
+        document.getElementById('osError').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('errorText').style.display = 'none';
+            document.getElementById('iphoneSim').style.display = 'block';
+            setTimeout(startVideoCycle, 2000);
+        }, 2000);
+    }
+    function startVideoCycle() {
+        document.getElementById('osError').style.display = 'none';
+        const video = document.getElementById('secretVideo');
+        video.style.display = 'block';
+        video.play();
+        video.onended = () => {
+            videoLoops++;
+            if(videoLoops < 3) video.play();
+            else { video.style.display = 'none'; showFullTerminal(); }
+        };
+    }
+    function showFullTerminal() {
+        document.getElementById('fullTerminal').style.display = 'block';
+        const input = document.getElementById('termInput');
+        input.onkeydown = (e) => { if(e.key === 'Enter' && input.value === 'delete') location.reload(); };
+    }
+
+    function downloadFlud() { window.open("https://play.google.com/store/apps/details?id=com.delphicoder.flud", "_blank"); closeModal(); }
+    function closeModal() { document.getElementById('welcomeModal').style.display = 'none'; }
+    function toggleSettings() { document.getElementById('settingsPanel').classList.toggle('open'); }
+    function toggleTheme() { document.body.classList.toggle('dark-theme'); }
+    function goToBot() { window.open("https://t.me/Send_gameTorrent_bot", "_blank"); }
+
+    window.onload = () => { renderGames(); document.getElementById('welcomeModal').style.display = 'flex'; };
+</script>
+</body>
+</html>
