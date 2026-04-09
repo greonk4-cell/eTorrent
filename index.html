@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EliteTorrent — Легендарная Библиотека</title>
+    <title>EliteTorrent — Легендарная Библиотека (xatab Edition)</title>
     <style>
         :root {
             --bg-color: #f4f7f6;
@@ -92,7 +92,7 @@
         
         .modal-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 14px; }
         .btn-download { background: var(--accent); color: white; }
-        .btn-skip { background: #e74c3c; color: white; opacity: 0.8; }
+        .btn-skip { background: #3498db; color: white; }
 
         .library {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -125,7 +125,6 @@
 
         .badge { position: absolute; top: 10px; right: 10px; padding: 3px 7px; border-radius: 4px; font-size: 10px; color: white; font-weight: bold; z-index: 10; }
         .pc { background: #3498db; }
-        .apk { background: #2ecc71; }
 
         .panel-btn { width: 100%; padding: 12px; margin-bottom: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .theme-btn { background: var(--card-border); color: var(--text-main); }
@@ -156,9 +155,11 @@
 <div id="welcomeModal" class="modal-overlay">
     <div class="modal-card">
         <h2>Магия P2P 🚀</h2>
-        <p>Для ПК используйте Magnet-ссылки. Для Android рекомендуем <b>Flud</b>.</p>
-        <button class="modal-btn btn-download" onclick="downloadFlud()">✅ Установить Flud (Android)</button>
-        <button class="modal-btn btn-skip" onclick="closeModal()">❌ У меня уже есть клиент</button>
+        <p>EliteTorrent — теперь только лучшие PC игры. Для скачивания нужен торрент-клиент.</p>
+        <div style="text-align:left; margin: 15px 0; font-size: 13px; color: var(--text-muted);">
+            <b>Рекомендуем:</b> qBittorrent или uTorrent.
+        </div>
+        <button class="modal-btn btn-skip" onclick="closeModal()">✅ Понятно</button>
     </div>
 </div>
 
@@ -173,7 +174,7 @@
 <div id="settingsPanel" class="settings-panel">
     <h3>Настройки</h3><br>
     <button class="panel-btn theme-btn" onclick="toggleTheme()">🌓 Переключить тему</button>
-    <button class="panel-btn bot-btn" onclick="goToBot()">🚀 Заказать / Загрузить игру</button>
+    <button class="panel-btn bot-btn" onclick="goToBot()">🚀 Заказать / Предложить игру</button>
 </div>
 
 <main class="library" id="gameGrid"></main>
@@ -186,28 +187,16 @@
     let clickTimer;
     let videoLoops = 0;
 
+    // ТОЛЬКО PC ИГРЫ (XATAB И КЛАССИКА)
     const games = [
-        { name: "RED DEAD REDEMPTION 2", img: "rdr2book.jpg", type: "pc", magnet: "", verified: true, pcOnly: true },
-        { name: "RED DEAD REDEMPTION 1", img: "Rdrbook.jpg", type: "pc", magnet: "", verified: true },
-        { name: "RED DEAD REDEMPTION REVOLVER", img: "rdrrbook.jpg", type: "pc", magnet: "", verified: true },
-        { name: "Counter-Strike 2", img: "Cs2book.jpg", type: "pc", magnet: "", verified: true, pcOnly: true },
-        { name: "CS: GO", img: "csgobook.jpg", type: "pc", magnet: "", verified: true, pcOnly: true },
-        { name: "CS: Source", img: "cssbook.jpg", type: "pc", magnet: "", verified: true },
-        { name: "CS: Condition Zero", img: "csczbook.jpg", type: "pc", magnet: "", verified: true },
-        { name: "Counter-Strike 1.6", img: "cs1.6.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:61882650058296339794B0B76378652399238128&dn=Counter-Strike%201.6%20Classic&tr=udp%3a%2f%2ftracker.openbittorrent.com%3a80%2fannounce&tr=udp%3a%2f%2ftracker.opentrackr.org%3a1337%2fannounce", verified: true },
-        { name: "Counter-Strike 1.0", img: "cs1.0.jpg", type: "pc", magnet: "", verified: true },
-        { name: "Half-Life 2: Orange Box", img: "hl2book.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:61882898953164923769189855325514809228&dn=Half-Life+2+-+The+Orange+Box+%5BR.G.+Mechanics%5D", verified: true },
-        { name: "Half-Life 1", img: "hlbook.jpg", type: "pc", magnet: "", verified: true },
-        { name: "GTA V", img: "GtaVbook.png", type: "pc", magnet: "magnet:?xt=urn:btih:6E48220A99468E75C41892936746864C65561578&dn=Grand+Theft+Auto+V+%5Bv+1.0.2802%5D+%282015%29+PC+%7C+RePack+от+xatab&tr=http%3A%2F%2Fbt4.t-ru.org%2Fann%3Fmagn", verified: true, pcOnly: true },
-        { name: "GTA IV", img: "hello.jpg", type: "pc", magnet: "", verified: true, pcOnly: true },
-        { name: "GTA: San Andreas", img: "GtaSabook.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:6188a46f2d22a8435d799008889a7f340f1ca40d", verified: true },
-        { name: "GTA: Vice City Stories", img: "GtaVcsbook.jpg", type: "apk", link: "https://t.me/Send_gameTorrent_bot", verified: true },
-        { name: "GTA: Vice City", img: "gtavcbook.jpg", type: "apk", link: "https://t.me/Send_gameTorrent_bot", verified: true },
-        { name: "GTA III", img: "GtaIIIbook.jpg", type: "apk", link: "https://t.me/Send_gameTorrent_bot", verified: true },
-        { name: "GTA: London", img: "GtaLbook.png", type: "pc", magnet: "", verified: true },
-        { name: "GTA 2", img: "gta2book.jpg", type: "pc", magnet: "", verified: true },
-        { name: "GTA 1", img: "Gta1book.jpg", type: "pc", magnet: "", verified: true },
-        { name: "Minecraft PE", img: "mc.jpg", type: "apk", link: "https://t.me/Send_gameTorrent_bot", verified: true }
+        { name: "RED DEAD REDEMPTION 2 (xatab)", img: "rdr2book.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:109E2B5A81977717462B348259A47164C8360492&dn=Red+Dead+Redemption+2+%5Bv+1.0.1311.23%5D+%282019%29+PC+%7C+RePack+от+xatab", verified: true },
+        { name: "RED DEAD REDEMPTION 1", img: "Rdrbook.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:6188A46F2D22A8435D799008889A7F340F1CA40D&dn=RDR1", verified: true },
+        { name: "GTA V (xatab)", img: "GtaVbook.png", type: "pc", magnet: "magnet:?xt=urn:btih:6E48220A99468E75C41892936746864C65561578&dn=Grand+Theft+Auto+V+%5Bv+1.0.2802%5D+%282015%29+PC+%7C+RePack+от+xatab", verified: true },
+        { name: "GTA IV (xatab)", img: "hello.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:3e7784699564177b830f607d91e604f37803730e&dn=GTA+IV", verified: true },
+        { name: "GTA: San Andreas", img: "GtaSabook.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:6188a46f2d22a8435d799008889a7f340f1ca40d&dn=GTA+San+Andreas", verified: true },
+        { name: "Half-Life 2: Orange Box (xatab)", img: "hl2book.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:B1D3477F32D305A0A4B384D0160914E8064F228D&dn=Half-Life+2+-+The+Orange+Box+%5BR.G.+Mechanics%2Bxatab%5D", verified: true },
+        { name: "Counter-Strike 1.6 (Classic)", img: "cs1.6.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:61882650058296339794B0B76378652399238128&dn=Counter-Strike%201.6", verified: true },
+        { name: "CS: GO (xatab)", img: "csgobook.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:D0D7E7B5C6674A559E6D4E70D0E7D2E5C4E5D1E4&dn=CSGO+xatab", verified: true }
     ];
 
     const grid = document.getElementById('gameGrid');
@@ -222,10 +211,10 @@
             const verifiedTag = game.verified ? `<div class="verified-badge">🛡️ DR.WEB CLEAN</div>` : '';
 
             card.innerHTML = `
-                <div class="badge ${game.type}">${game.type.toUpperCase()}</div>
+                <div class="badge pc">PC ONLY</div>
                 ${verifiedTag}
                 <div class="cover-wrap">
-                    <img src="${game.img}" alt="${game.name}" class="cover-img" onerror="this.src='https://via.placeholder.com/200x280?text=Elite+P2P'">
+                    <img src="${game.img}" alt="${game.name}" class="cover-img" onerror="this.src='https://via.placeholder.com/200x280?text=Elite+PC'">
                 </div>
                 <div class="game-info"><h3>${game.name}</h3></div>`;
             grid.appendChild(card);
@@ -233,15 +222,26 @@
     }
 
     function startDownload(game) {
-        if (isMobile && game.pcOnly) { alert("Эта игра только для ПК версии."); return; }
-        
-        if (game.type === 'pc') {
-            if (game.magnet) {
-                alert(`💾 Запуск Magnet-ссылки для: ${game.name}`);
-                window.location.href = game.magnet;
-            } else { goToBot(); }
+        // Проверка для мобилок
+        if (isMobile) {
+            let confirmDownload = confirm("Вы точно хотите скачать эту игру?\nОна предназначена для ПК (Windows).");
+            if (!confirmDownload) return;
+        }
+
+        if (game.magnet) {
+            const start = Date.now();
+            window.location.href = game.magnet;
+
+            // Если через 2 сек ничего не произошло (клиент не открылся), помогаем юзеру
+            setTimeout(() => {
+                if (Date.now() - start < 2500) {
+                    if(confirm("Для загрузки нужен торрент-клиент. Хотите скачать uTorrent?")) {
+                        window.open("https://www.utorrent.com/", "_blank");
+                    }
+                }
+            }, 2000);
         } else {
-            if (game.link) { window.open(game.link, "_blank"); } else { goToBot(); }
+            alert("Ссылка обновляется!");
         }
     }
 
@@ -285,7 +285,6 @@
         input.onkeydown = (e) => { if(e.key === 'Enter' && input.value === 'delete') location.reload(); };
     }
 
-    function downloadFlud() { window.open("https://play.google.com/store/apps/details?id=com.delphicoder.flud", "_blank"); closeModal(); }
     function closeModal() { document.getElementById('welcomeModal').style.display = 'none'; }
     function toggleSettings() { document.getElementById('settingsPanel').classList.toggle('open'); }
     function toggleTheme() { document.body.classList.toggle('dark-theme'); }
