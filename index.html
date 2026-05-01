@@ -2,295 +2,110 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EliteTorrent — Легендарная Библиотека (xatab Edition)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>@GEUTAX PS2 Legacy</title>
     <style>
-        :root {
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-main: #333333;
-            --text-muted: #7f8c8d;
-            --card-border: #e1e8e5;
-            --header-bg: #2ecc71;
-            --header-text: #ffffff;
-            --panel-bg: #ffffff;
-            --accent: #2ecc71;
-        }
-
-        .dark-theme {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-main: #e0e0e0;
-            --text-muted: #aaaaaa;
-            --card-border: #333333;
-            --panel-bg: #1e1e1e;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; transition: 0.3s; }
-        
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Segoe UI', sans-serif;
-            padding-top: 100px;
-            overflow-x: hidden;
-        }
-
-        header {
-            position: fixed; top: 0; width: 100%; height: 80px;
-            background: var(--header-bg);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 5%; z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .main-logo { height: 60px; width: auto; cursor: pointer; user-select: none; }
-        .header-right { display: flex; align-items: center; gap: 15px; }
-        .settings-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
-        .user-pill { background: white; color: #2ecc71; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; }
-
-        #terminalOverlay {
-            position: fixed; top: 80px; left: -100%; width: 250px; height: calc(100% - 80px);
-            background: rgba(0,0,0,0.9); color: #00ff00; font-family: 'Courier New', monospace;
-            font-size: 10px; padding: 10px; z-index: 998; overflow: hidden; white-space: nowrap;
-            border-right: 2px solid #00ff00; transition: 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-        }
-        #terminalOverlay.active { left: 0; }
-
-        #secretVideo {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 3000; display: none; background: black;
-        }
-
-        #fullTerminal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: black; color: #00ff00; font-family: monospace;
-            padding: 20px; z-index: 5000; display: none;
-        }
-        #fullTerminal input {
-            background: none; border: none; color: #00ff00; outline: none;
-            width: 100%; font-family: monospace; font-size: 18px;
-        }
-
-        #osError {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: black; color: white; z-index: 4000; display: none;
-            flex-direction: column; align-items: center; justify-content: center;
-            font-family: monospace; text-align: center;
-        }
-        .apple-logo { font-size: 80px; margin-bottom: 20px; }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 2000;
-            backdrop-filter: blur(5px);
-        }
-        .modal-card {
-            background: var(--panel-bg); padding: 30px; border-radius: 20px; max-width: 400px; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 90%;
-        }
-        
-        .modal-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 14px; }
-        .btn-download { background: var(--accent); color: white; }
-        .btn-skip { background: #3498db; color: white; }
-
-        .library {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px; padding: 20px 5%; max-width: 1400px; margin: 0 auto;
-        }
-
-        .game-card {
-            background: var(--card-bg); border-radius: 12px; border: 1px solid var(--card-border);
-            overflow: hidden; display: flex; flex-direction: column; cursor: pointer; position: relative;
-        }
-        .game-card:hover { transform: translateY(-8px); border-color: #2ecc71; }
-
-        .verified-badge {
-            position: absolute; top: 35px; right: 10px;
-            background: #27ae60; color: white; font-size: 8px;
-            padding: 2px 5px; border-radius: 3px; z-index: 11;
-            border: 1px solid rgba(255,255,255,0.2); font-weight: bold;
-        }
-
-        .cover-wrap { width: 100%; height: 280px; background: #ddd; overflow: hidden; }
-        .cover-img { width: 100%; height: 100%; object-fit: cover; }
-        .game-info { padding: 15px; flex-grow: 1; text-align: center; }
-        h3 { font-size: 14px; line-height: 1.2; font-weight: 600; }
-
-        .settings-panel {
-            position: fixed; top: 80px; right: -300px; width: 300px; height: 100%; 
-            background: var(--panel-bg); z-index: 999; padding: 20px; border-left: 1px solid var(--card-border);
-        }
-        .settings-panel.open { right: 0; }
-
-        .badge { position: absolute; top: 10px; right: 10px; padding: 3px 7px; border-radius: 4px; font-size: 10px; color: white; font-weight: bold; z-index: 10; }
-        .pc { background: #3498db; }
-
-        .panel-btn { width: 100%; padding: 12px; margin-bottom: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .theme-btn { background: var(--card-border); color: var(--text-main); }
-        .bot-btn { background: #2ecc71; color: white; margin-top: 20px; }
+        body { margin: 0; background: #000; color: #0f0; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; transition: opacity 0.5s; }
+        .bar-container { width: 250px; height: 2px; background: #111; margin-top: 20px; border-radius: 10px; overflow: hidden; }
+        #progress-bar { width: 0%; height: 100%; background: #0f0; transition: width 0.3s; }
+        #main-ui { opacity: 0; transition: opacity 1s; display: flex; flex-direction: column; align-items: center; width: 100%; }
+        canvas { width: 95vw; max-width: 640px; aspect-ratio: 4/3; background: #000; border: 1px solid #333; }
+        .btn { margin-top: 20px; padding: 15px 30px; background: none; border: 1px solid #0f0; color: #0f0; font-weight: bold; cursor: pointer; }
     </style>
 </head>
-<body onclick="trackClicks(event)">
+<body>
 
-<div id="terminalOverlay"></div>
-<video id="secretVideo" src="1000033098.mp4"></video>
-
-<div id="osError">
-    <div id="errorText">No command<br>Operating System not found</div>
-    <div id="iphoneSim" style="display:none;">
-        <div class="apple-logo"></div>
-        <div style="background: rgba(255,0,0,0.2); padding: 20px; border-radius: 10px; border: 1px solid red;">
-            Температура: Критическая
-        </div>
+    <div id="loader">
+        <div id="status">ФИНАЛЬНЫЙ ОБХОД @GEUTAX...</div>
+        <div class="bar-container"><div id="progress-bar"></div></div>
+        <div id="percent" style="margin-top: 10px;">0%</div>
     </div>
-</div>
 
-<div id="fullTerminal">
-    <div>EliteTorrent Kernel v8.5</div>
-    <br>
-    <div style="display:flex;"><span>admin@elite:~$ &nbsp;</span><input type="text" id="termInput" autofocus></div>
-</div>
-
-<div id="welcomeModal" class="modal-overlay">
-    <div class="modal-card">
-        <h2>Магия P2P 🚀</h2>
-        <p>EliteTorrent — теперь только лучшие PC игры. Для скачивания нужен торрент-клиент.</p>
-        <div style="text-align:left; margin: 15px 0; font-size: 13px; color: var(--text-muted);">
-            <b>Рекомендуем:</b> qBittorrent или uTorrent.
-        </div>
-        <button class="modal-btn btn-skip" onclick="closeModal()">✅ Понятно</button>
+    <div id="main-ui">
+        <div style="margin-bottom: 10px; opacity: 0.5;">@GEUTAX PS2 ENGINE</div>
+        <canvas id="playCanvas"></canvas>
+        <button id="biosBtn" class="btn" onclick="document.getElementById('biosFile').click()" disabled>ЗАГРУЗКА...</button>
     </div>
-</div>
 
-<header>
-    <a href="javascript:void(0)" onclick="eggClick()"><img src="logo.jpg" alt="ET" class="main-logo" onerror="this.src='https://via.placeholder.com/60?text=ET'"></a>
-    <div class="header-right">
-        <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
-        <div class="user-pill">👤 Admin</div>
-    </div>
-</header>
+    <input type="file" id="biosFile" style="display:none" accept=".bin">
 
-<div id="settingsPanel" class="settings-panel">
-    <h3>Настройки</h3><br>
-    <button class="panel-btn theme-btn" onclick="toggleTheme()">🌓 Переключить тему</button>
-    <button class="panel-btn bot-btn" onclick="goToBot()">🚀 Заказать / Предложить игру</button>
-</div>
+    <script type="module">
+        import Play from './Play.js';
 
-<main class="library" id="gameGrid"></main>
-
-<script>
-    let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    let eggCounter = 0;
-    let hackActive = false;
-    let fastClicks = 0;
-    let clickTimer;
-    let videoLoops = 0;
-
-    // ТОЛЬКО PC ИГРЫ (XATAB И КЛАССИКА)
-    const games = [
-        { name: "RED DEAD REDEMPTION 2 (xatab)", img: "rdr2book.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:109E2B5A81977717462B348259A47164C8360492&dn=Red+Dead+Redemption+2+%5Bv+1.0.1311.23%5D+%282019%29+PC+%7C+RePack+от+xatab", verified: true },
-        { name: "RED DEAD REDEMPTION 1", img: "Rdrbook.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:6188A46F2D22A8435D799008889A7F340F1CA40D&dn=RDR1", verified: true },
-        { name: "GTA V (xatab)", img: "GtaVbook.png", type: "pc", magnet: "magnet:?xt=urn:btih:6E48220A99468E75C41892936746864C65561578&dn=Grand+Theft+Auto+V+%5Bv+1.0.2802%5D+%282015%29+PC+%7C+RePack+от+xatab", verified: true },
-        { name: "GTA IV (xatab)", img: "hello.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:3e7784699564177b830f607d91e604f37803730e&dn=GTA+IV", verified: true },
-        { name: "GTA: San Andreas", img: "GtaSabook.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:6188a46f2d22a8435d799008889a7f340f1ca40d&dn=GTA+San+Andreas", verified: true },
-        { name: "Half-Life 2: Orange Box (xatab)", img: "hl2book.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:B1D3477F32D305A0A4B384D0160914E8064F228D&dn=Half-Life+2+-+The+Orange+Box+%5BR.G.+Mechanics%2Bxatab%5D", verified: true },
-        { name: "Counter-Strike 1.6 (Classic)", img: "cs1.6.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:61882650058296339794B0B76378652399238128&dn=Counter-Strike%201.6", verified: true },
-        { name: "CS: GO (xatab)", img: "csgobook.jpg", type: "pc", magnet: "magnet:?xt=urn:btih:D0D7E7B5C6674A559E6D4E70D0E7D2E5C4E5D1E4&dn=CSGO+xatab", verified: true }
-    ];
-
-    const grid = document.getElementById('gameGrid');
-
-    function renderGames() {
-        grid.innerHTML = '';
-        games.forEach(game => {
-            const card = document.createElement('div');
-            card.className = 'game-card';
-            card.onclick = () => startDownload(game);
+        const statusMsg = document.getElementById('status');
+        
+        const moduleConfig = {
+            canvas: document.getElementById('playCanvas'),
             
-            const verifiedTag = game.verified ? `<div class="verified-badge">🛡️ DR.WEB CLEAN</div>` : '';
+            // ПЕРЕХВАТ ОШИБКИ: Подменяем IDBFS на MEMFS до запуска
+            preRun: [function(mod) {
+                console.log("[SYSTEM]: Kill IDBFS, using Virtual RAM only");
+                // Создаем виртуальные пути, которые ищет эмулятор
+                mod.FS.mkdir('/data');
+                mod.FS.mkdir('/data/play');
+                // Маскируем IDBFS под обычную память, чтобы insertSync не падал
+                mod.FS.mount(mod.FS.filesystems.MEMFS, {}, '/data/play');
+            }],
 
-            card.innerHTML = `
-                <div class="badge pc">PC ONLY</div>
-                ${verifiedTag}
-                <div class="cover-wrap">
-                    <img src="${game.img}" alt="${game.name}" class="cover-img" onerror="this.src='https://via.placeholder.com/200x280?text=Elite+PC'">
-                </div>
-                <div class="game-info"><h3>${game.name}</h3></div>`;
-            grid.appendChild(card);
-        });
-    }
+            arguments: ["--no-threads", "--no-audio"],
 
-    function startDownload(game) {
-        // Проверка для мобилок
-        if (isMobile) {
-            let confirmDownload = confirm("Вы точно хотите скачать эту игру?\nОна предназначена для ПК (Windows).");
-            if (!confirmDownload) return;
-        }
+            instantiateWasm: function(imports, successCallback) {
+                fetch('./Play.wasm')
+                    .then(res => res.arrayBuffer())
+                    .then(bytes => WebAssembly.instantiate(bytes, imports))
+                    .then(results => {
+                        console.log("[SYSTEM]: WASM OK");
+                        // Увеличиваем задержку для мобильного Chrome
+                        setTimeout(() => successCallback(results.instance), 300);
+                    })
+                    .catch(e => { statusMsg.innerText = "WASM FAIL"; });
+                return {};
+            },
 
-        if (game.magnet) {
-            const start = Date.now();
-            window.location.href = game.magnet;
-
-            // Если через 2 сек ничего не произошло (клиент не открылся), помогаем юзеру
-            setTimeout(() => {
-                if (Date.now() - start < 2500) {
-                    if(confirm("Для загрузки нужен торрент-клиент. Хотите скачать uTorrent?")) {
-                        window.open("https://www.utorrent.com/", "_blank");
-                    }
+            setStatus: (text) => {
+                const match = text.match(/([0-9\.]+)%/);
+                if (match) {
+                    document.getElementById('progress-bar').style.width = match[1] + '%';
+                    document.getElementById('percent').innerText = Math.round(match[1]) + '%';
                 }
-            }, 2000);
-        } else {
-            alert("Ссылка обновляется!");
-        }
-    }
+            },
 
-    function eggClick() { if(hackActive) return; eggCounter++; if (eggCounter >= 10) startHack(); }
-    function trackClicks(e) {
-        if(!hackActive) return;
-        fastClicks++;
-        clearTimeout(clickTimer);
-        clickTimer = setTimeout(() => { fastClicks = 0; }, 1000);
-        if(fastClicks >= 5) { fastClicks = 0; triggerSystemFailure(); }
-    }
-    function startHack() {
-        hackActive = true;
-        const term = document.getElementById('terminalOverlay');
-        term.classList.add('active');
-        term.innerHTML = "> Bypassing Dr.Web...<br>> Memory unlocked...<br>> HACK COMPLETED";
-        isMobile = false; 
-    }
-    function triggerSystemFailure() {
-        document.getElementById('osError').style.display = 'flex';
-        setTimeout(() => {
-            document.getElementById('errorText').style.display = 'none';
-            document.getElementById('iphoneSim').style.display = 'block';
-            setTimeout(startVideoCycle, 2000);
-        }, 2000);
-    }
-    function startVideoCycle() {
-        document.getElementById('osError').style.display = 'none';
-        const video = document.getElementById('secretVideo');
-        video.style.display = 'block';
-        video.play();
-        video.onended = () => {
-            videoLoops++;
-            if(videoLoops < 3) video.play();
-            else { video.style.display = 'none'; showFullTerminal(); }
+            onRuntimeInitialized: function() {
+                document.getElementById('loader').style.opacity = "0";
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = "none";
+                    document.getElementById('main-ui').style.opacity = "1";
+                    document.getElementById('biosBtn').disabled = false;
+                    document.getElementById('biosBtn').innerText = "ВЫБРАТЬ BIOS";
+                }, 500);
+            }
         };
-    }
-    function showFullTerminal() {
-        document.getElementById('fullTerminal').style.display = 'block';
-        const input = document.getElementById('termInput');
-        input.onkeydown = (e) => { if(e.key === 'Enter' && input.value === 'delete') location.reload(); };
-    }
 
-    function closeModal() { document.getElementById('welcomeModal').style.display = 'none'; }
-    function toggleSettings() { document.getElementById('settingsPanel').classList.toggle('open'); }
-    function toggleTheme() { document.body.classList.toggle('dark-theme'); }
-    function goToBot() { window.open("https://t.me/Send_gameTorrent_bot", "_blank"); }
+        // Запуск
+        try {
+            Play(moduleConfig).then(m => { window.Module = m; });
+        } catch(e) {
+            statusMsg.innerText = "HALT";
+        }
 
-    window.onload = () => { renderGames(); document.getElementById('welcomeModal').style.display = 'flex'; };
-</script>
+        // BIOS
+        document.getElementById('biosFile').onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file || !window.Module?.FS) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const data = new Uint8Array(ev.target.result);
+                // Пишем прямо в корень MEMFS
+                window.Module.FS.writeFile('/bios.bin', data);
+                if (window.Module.setOption) {
+                    window.Module.setOption("Play", "BiosPath", "/bios.bin");
+                    window.Module.setOption("Play", "EnableHle", false);
+                }
+                alert("BIOS OK!");
+            };
+            reader.readAsArrayBuffer(file);
+        };
+    </script>
 </body>
 </html>
