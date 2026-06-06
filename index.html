@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Android 4.4 Clone</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="phone-container">
+        <!-- Boot Screen Overlay -->
+        <div id="boot-screen">
+            <img src="/alternative_bootscreen.gif" alt="Booting...">
+        </div>
+
+        <!-- Recovery Mode (accessible via long-press on boot screen) -->
+        <div id="recovery-screen" class="hidden">
+            <div class="recovery-header">
+                <div class="recovery-title">Android Recovery</div>
+                <div class="recovery-sub">No command</div>
+            </div>
+            <div class="recovery-body">
+                <div class="recovery-instructions">
+                    Use volume keys or swipe to change, power to select.
+                </div>
+                <ul class="recovery-options" tabindex="0">
+                    <li data-action="reboot">Reboot system now</li>
+                    <li data-action="recovery">Apply update from ADB</li>
+                    <li data-action="wipe">Wipe data/factory reset</li>
+                    <li data-action="cache">Wipe cache partition</li>
+                    <li data-action="mount">Mount /system</li>
+                    <li data-action="poweroff">Power off</li>
+                </ul>
+                <div class="recovery-footer">Press Back to exit recovery</div>
+            </div>
+        </div>
+
+        <!-- Main UI (Hidden during boot) -->
+        <div id="android-ui" class="hidden">
+
+            <!-- Status Bar -->
+            <div id="status-bar">
+                <div class="status-left">
+                    <span id="carrier-name">Google</span>
+                </div>
+                <div class="status-right">
+                    <img src="/wifi_and_data.png" class="status-icon" alt="Network">
+                    <div class="battery-container">
+                        <span id="battery-percent">84%</span>
+                        <img src="/charging_battery.png" class="status-icon battery" alt="Battery">
+                    </div>
+                    <span id="current-time">12:00</span>
+                </div>
+            </div>
+
+            <!-- Lock Screen -->
+            <div id="lock-screen" class="">
+                <div class="lock-content">
+                    <div class="lock-top">
+                        <div id="lock-time">12:00</div>
+                        <div id="lock-date">WEDNESDAY, NOVEMBER 13</div>
+                    </div>
+                    
+                    <div class="lock-center">
+                        <div class="lock-ring">
+                            <div class="chevron-pulse">
+                                <img src="/unlock_arrow_lockscreen.png" class="lock-chevron chevron-up" alt="Up">
+                                <img src="/unlock_arrow_lockscreen.png" class="lock-chevron chevron-left" alt="Left">
+                                <img src="/unlock_arrow_lockscreen.png" class="lock-chevron chevron-right" alt="Right">
+                            </div>
+                            <div class="lock-handle-container">
+                                <img src="/lock_lockscreen.png" id="lock-handle" alt="Lock">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lock-bottom-area">
+                    <img src="/camera_shortcut_lockscreen.png" id="lock-camera-shortcut" alt="Camera">
+                </div>
+            </div>
+
+            <!-- Quick Settings Panel -->
+            <div id="quick-settings" class="panel-hidden">
+                <div class="qs-grid">
+                    <div class="qs-tile"><img src="/user_profile_quicksettings.png" alt="User"></div>
+                    <div class="qs-tile"><img src="/settingscard_quicksettings.png" alt="Settings"></div>
+                    <div class="qs-tile"><img src="/wifi_card_quicksettings.png" alt="WiFi"></div>
+                    <div class="qs-tile"><img src="/simcard_card_quicksetiings.png" alt="Carrier"></div>
+                    <div class="qs-tile"><img src="/battery_card_quicksettings.png" alt="Battery"></div>
+                    <div class="qs-tile"><img src="/airplane_mode_card_quicksettings.png" alt="Airplane"></div>
+                    <div class="qs-tile"><img src="/bluetooth_toggler_card_quicksettings.png" alt="Bluetooth"></div>
+                    <div class="qs-tile"><img src="/location_card_quicksettings.png" alt="Location"></div>
+                    <div class="qs-tile"><img src="/alarm_clock_settings_card_quicksettings.png" alt="Alarm"></div>
+                </div>
+                <div class="qs-footer">
+                   <img src="/quicksettings_icon1.png" id="qs-back-to-notifications" alt="Back">
+                </div>
+            </div>
+
+            <!-- Camera App Interface -->
+            <div id="camera-app" class="hidden">
+                <div class="camera-preview">
+                    <div class="camera-grid">
+                        <div class="grid-line v1"></div><div class="grid-line v2"></div>
+                        <div class="grid-line h1"></div><div class="grid-line h2"></div>
+                    </div>
+                    <div class="focus-ring"></div>
+                    <div class="camera-settings-btn">⚙️</div>
+                </div>
+                <div class="camera-controls">
+                    <div class="camera-mode-switcher">
+                        <div class="mode-indicator active" id="mode-photo">📷</div>
+                        <div class="mode-indicator" id="mode-video">📹</div>
+                        <div class="mode-indicator" id="mode-pano">🌐</div>
+                    </div>
+                    <div id="camera-shutter">
+                        <div class="shutter-inner"></div>
+                    </div>
+                    <div class="camera-gallery-preview" id="cam-to-gallery">
+                        <div class="thumb-circle" style="background-image: url('/gallery_image_1.png');"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phone App Interface -->
+            <div id="phone-app" class="hidden">
+                <div class="phone-header">
+                    <div class="phone-tabs">
+                        <div class="phone-tab active">SPEED DIAL</div>
+                        <div class="phone-tab">RECENTS</div>
+                        <div class="phone-tab">CONTACTS</div>
+                    </div>
+                </div>
+                <div class="phone-main">
+                    <div class="phone-display">
+                        <div id="phone-number"></div>
+                        <div id="phone-delete-btn" class="hidden">⌫</div>
+                    </div>
+                    <div class="phone-dialpad">
+                        <div class="dial-btn" data-val="1">1<span>&nbsp;</span></div>
+                        <div class="dial-btn" data-val="2">2<span>ABC</span></div>
+                        <div class="dial-btn" data-val="3">3<span>DEF</span></div>
+                        <div class="dial-btn" data-val="4">4<span>GHI</span></div>
+                        <div class="dial-btn" data-val="5">5<span>JKL</span></div>
+                        <div class="dial-btn" data-val="6">6<span>MNO</span></div>
+                        <div class="dial-btn" data-val="7">7<span>PQRS</span></div>
+                        <div class="dial-btn" data-val="8">8<span>TUV</span></div>
+                        <div class="dial-btn" data-val="9">9<span>WXYZ</span></div>
+                        <div class="dial-btn" data-val="*">*</div>
+                        <div class="dial-btn" data-val="0">0<span>+</span></div>
+                        <div class="dial-btn" data-val="#">#</div>
+                    </div>
+                    <div class="phone-actions">
+                        <div id="phone-call-btn">
+                            <img src="/phone_icon_dock.png" alt="Call">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings App Interface -->
+            <div id="settings-app" class="hidden">
+                <div class="settings-header">
+                    <img src="/settings_app_header.png" alt="Settings">
+                </div>
+                <div class="settings-scroll-area" id="settings-main-list">
+                    <div class="settings-content">
+                        <div class="settings-section">
+                            <img src="/wirelessandnetworks_catoegory_text_settings.png" class="section-title" alt="Wireless & Networks">
+                            <div class="settings-item">
+                                <img src="/wifi_text_wirelessandnetworks_category_settings.png" alt="WiFi">
+                                <img src="/on_slider_settings.png" class="settings-slider" alt="On">
+                            </div>
+                            <div class="settings-item">
+                                <img src="/bluetooth_toggler_wirelessandnetworks_category_settings.png" alt="Bluetooth">
+                                <img src="/off_slider_settings.png" class="settings-slider" alt="Off">
+                            </div>
+                            <div class="settings-item">
+                                <img src="/data_usage_text_wirelessandnetworks_category_settings.png" alt="Data usage">
+                            </div>
+                            <div class="settings-item">
+                                <img src="/more_text_wirelessandnetworks_category_settings.png" alt="More">
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <img src="/device_category_text_settings.png" class="section-title" alt="Device">
+                            <div class="settings-item clickable" data-sub="sound">
+                                <img src="/sound_text_device_category_settings.png" alt="Sound">
+                            </div>
+                            <div class="settings-item clickable" data-sub="display">
+                                <img src="/display_text_device_category_settings.png" alt="Display">
+                            </div>
+                            <div class="settings-item">
+                                <img src="/storage_text_device_category_settings.png" alt="Storage">
+                            </div>
+                            <div class="settings-item">
+                                <img src="/battery_text_device_category_settings.png" alt="Battery">
+                            </div>
+                            <div class="settings-item">
+                                <img src="/apps_text_device_category_settings.png" alt="Apps">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Sub-settings panel -->
+                <div id="settings-sub-panel" class="hidden">
+                    <div class="sub-settings-header">
+                        <span id="sub-settings-back">←</span>
+                        <span id="sub-settings-title">Sound</span>
+                    </div>
+                    <div id="sub-settings-content" class="settings-content">
+                        <!-- Dynamic sub-content -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Downloads App Interface -->
+            <div id="downloads-app" class="hidden">
+                <div class="app-header-simple">
+                    <span class="header-title">Downloads</span>
+                </div>
+                <div class="downloads-content">
+                    <div class="empty-state">No downloads yet.</div>
+                </div>
+            </div>
+
+            <!-- Gallery App Interface -->
+            <div id="gallery-app" class="hidden">
+                <div class="gallery-header">
+                    <div class="gallery-tabs">
+                        <div class="gallery-tab active">ALBUMS</div>
+                        <div class="gallery-tab">LOCATIONS</div>
+                        <div class="gallery-tab">TIMES</div>
+                    </div>
+                </div>
+                <div class="gallery-grid" id="gallery-main-grid">
+                    <div class="gallery-album-card" data-album="Camera">
+                        <div class="album-preview" style="background-image: url('/gallery_image_1.png');"></div>
+                        <div class="album-info">
+                            <span class="album-name">Camera</span>
+                            <span class="album-count">4</span>
+                        </div>
+                    </div>
+                    <div class="gallery-album-card" data-album="Screenshots">
+                        <div class="album-preview" style="background-image: url('/gallery_image_3.png');"></div>
+                        <div class="album-info">
+                            <span class="album-name">Screenshots</span>
+                            <span class="album-count">12</span>
+                        </div>
+                    </div>
+                    <div class="gallery-album-card" data-album="WhatsApp">
+                        <div class="album-preview" style="background-image: url('/gallery_image_4.png');"></div>
+                        <div class="album-info">
+                            <span class="album-name">WhatsApp Images</span>
+                            <span class="album-count">86</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="gallery-viewer" class="hidden">
+                    <div class="viewer-header">
+                        <span id="viewer-back">←</span>
+                        <span id="viewer-title">Photo</span>
+                        <div class="viewer-actions">🔗 🗑️ ⋮</div>
+                    </div>
+                    <div class="viewer-content">
+                        <img id="viewer-img" src="" alt="Photo">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calculator App -->
+            <div id="calculator-app" class="hidden generic-app">
+                <div class="calc-display">0</div>
+                <div class="calc-grid">
+                    <div class="calc-btn">7</div><div class="calc-btn">8</div><div class="calc-btn">9</div><div class="calc-btn op">÷</div>
+                    <div class="calc-btn">4</div><div class="calc-btn">5</div><div class="calc-btn">6</div><div class="calc-btn op">×</div>
+                    <div class="calc-btn">1</div><div class="calc-btn">2</div><div class="calc-btn">3</div><div class="calc-btn op">−</div>
+                    <div class="calc-btn">.</div><div class="calc-btn">0</div><div class="calc-btn op-eq">=</div><div class="calc-btn op">+</div>
+                    <div class="calc-btn op" style="grid-column: span 4;">C</div>
+                </div>
+            </div>
+
+            <!-- Clock App -->
+            <div id="clock-app" class="hidden generic-app">
+                <div class="clock-tabs">
+                    <div class="clock-tab active" data-tab="clock">🕒</div>
+                    <div class="clock-tab" data-tab="alarm">⏰</div>
+                    <div class="clock-tab" data-tab="timer">⏳</div>
+                    <div class="clock-tab" data-tab="stopwatch">⏱️</div>
+                </div>
+                <div id="clock-view-clock" class="clock-main">
+                    <div class="analog-clock">
+                        <div class="hand hour"></div>
+                        <div class="hand minute"></div>
+                        <div class="hand second"></div>
+                    </div>
+                </div>
+                <div id="clock-view-alarm" class="clock-main hidden">
+                    <div class="alarm-list">
+                        <div class="alarm-item">
+                            <div class="alarm-time">07:00<span>AM</span></div>
+                            <div class="alarm-days">Mon, Tue, Wed, Thu, Fri</div>
+                            <img src="/on_slider_settings.png" class="settings-slider">
+                        </div>
+                        <div class="alarm-item">
+                            <div class="alarm-time">09:30<span>AM</span></div>
+                            <div class="alarm-days">Sat, Sun</div>
+                            <img src="/off_slider_settings.png" class="settings-slider">
+                        </div>
+                    </div>
+                    <div class="alarm-fab">+</div>
+                </div>
+                <div id="clock-view-timer" class="clock-main hidden">
+                    <div class="timer-display">00:00:00</div>
+                    <div class="timer-controls">
+                        <button class="timer-btn">START</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar App -->
+            <div id="calendar-app" class="hidden">
+                <div class="calendar-header">
+                    <div class="cal-top">
+                        <button id="cal-menu" class="cal-icon">☰</button>
+                        <div class="cal-title" id="cal-title">January 1970</div>
+                        <div class="cal-actions">
+                            <button id="cal-prev" class="cal-nav">◀</button>
+                            <button id="cal-next" class="cal-nav">▶</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="calendar-content">
+                    <div class="calendar-grid" id="cal-grid">
+                        <!-- Days generated dynamically -->
+                    </div>
+                </div>
+
+                <div id="cal-event-list" class="hidden">
+                    <div class="cal-event-header">
+                        <button id="cal-event-back">←</button>
+                        <div id="cal-event-date" class="cal-event-date">Date</div>
+                    </div>
+                    <div class="cal-event-body" id="cal-event-body">
+                        <!-- events -->
+                    </div>
+                    <div class="cal-event-actions">
+                        <button id="cal-add-event">+ Add Event</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Play Store App Interface -->
+            <div id="play-store-app" class="hidden">
+                <!-- Play Store Side Drawer -->
+                <div id="ps-drawer" class="ps-drawer-hidden">
+                    <div class="ps-drawer-content">
+                        <div class="ps-drawer-user">
+                            <div class="ps-drawer-avatar" style="background: #4caf50;">J</div>
+                            <div class="ps-drawer-user-info">
+                                <div class="ps-user-name">John Doe</div>
+                                <div class="ps-user-email">john.doe@gmail.com</div>
+                            </div>
+                        </div>
+                        <div class="ps-drawer-list">
+                            <div class="ps-drawer-item active"><span class="ps-drawer-icon">🛍️</span> Store Home</div>
+                            <div class="ps-drawer-item" data-action="my-apps"><span class="ps-drawer-icon">📦</span> My apps & games</div>
+                            <div class="ps-drawer-item"><span class="ps-drawer-icon">🔖</span> Wishlist</div>
+                            <div class="ps-drawer-divider"></div>
+                            <div class="ps-drawer-item"><span class="ps-drawer-icon">🎫</span> Redeem</div>
+                            <div class="ps-drawer-item"><span class="ps-drawer-icon">💳</span> Account</div>
+                            <div class="ps-drawer-item"><span class="ps-drawer-icon">⚙️</span> Settings</div>
+                            <div class="ps-drawer-divider"></div>
+                            <div class="ps-drawer-item"><span class="ps-drawer-icon">❓</span> Help & feedback</div>
+                        </div>
+                    </div>
+                    <div class="ps-drawer-overlay"></div>
+                </div>
+
+                <div id="ps-main-view">
+                    <div class="play-store-header" id="ps-header">
+                        <div class="ps-top">
+                            <div id="ps-drawer-btn" class="ps-icon-btn">☰</div>
+                            <span class="ps-title" id="ps-main-title">Google Play</span>
+                            <div class="ps-icons">
+                                <div id="ps-search-trigger" class="ps-icon-btn">🔍</div>
+                                <div class="ps-icon-btn">⋮</div>
+                            </div>
+                        </div>
+                        <div class="ps-tabs-scroll" id="ps-tabs-container">
+                            <div class="ps-tabs">
+                                <div class="ps-tab active" data-cat="apps">APPS</div>
+                                <div class="ps-tab" data-cat="games">GAMES</div>
+                                <div class="ps-tab" data-cat="movies">MOVIES</div>
+                                <div class="ps-tab" data-cat="music">MUSIC</div>
+                                <div class="ps-tab" data-cat="books">BOOKS</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="play-store-content" id="ps-home-content">
+                        <div class="ps-promo-banner" id="ps-banner">
+                            <div class="ps-banner-text">
+                                <div class="ps-banner-title">New & Updated</div>
+                                <div class="ps-banner-sub">Apps we love</div>
+                            </div>
+                        </div>
+                        <div class="ps-section">
+                            <div class="ps-section-header">Recommended for You</div>
+                            <div class="ps-horizontal-scroll" id="ps-featured-grid">
+                                <!-- Dynamic content -->
+                            </div>
+                        </div>
+                        <div class="ps-section">
+                            <div class="ps-section-header" id="ps-list-title">Top Charts</div>
+                            <div class="ps-list" id="ps-top-charts">
+                                <!-- Dynamic content -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- My Apps & Games View -->
+                    <div id="ps-my-apps-view" class="play-store-content hidden">
+                        <div class="ps-sub-tabs">
+                            <div class="ps-sub-tab active">INSTALLED</div>
+                            <div class="ps-sub-tab">ALL</div>
+                        </div>
+                        <div class="ps-list" id="ps-my-apps-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Other Drawer Views (Settings, Redeem, etc) -->
+                    <div id="ps-generic-view" class="play-store-content hidden">
+                        <div style="padding: 40px; text-align:center; color: #666;">
+                            <div id="ps-generic-icon" style="font-size: 48px; margin-bottom: 20px;">⚙️</div>
+                            <div id="ps-generic-title" style="font-size: 18px; font-weight: 500;">Settings</div>
+                            <p id="ps-generic-text" style="margin-top: 10px; font-size: 14px;">This page is currently under maintenance.</p>
+                        </div>
+                    </div>
+
+                    <!-- Play Store Search Overlay -->
+                    <div id="ps-search-overlay" class="hidden">
+                        <div class="ps-search-header">
+                            <span id="ps-search-back">←</span>
+                            <input type="text" id="ps-search-input" placeholder="Search Google Play">
+                            <span id="ps-search-mic">🎤</span>
+                        </div>
+                        <div class="ps-search-suggestions" id="ps-search-list">
+                            <div class="suggestion-item"><span>🕒</span> racing games</div>
+                            <div class="suggestion-item"><span>🕒</span> weather apps</div>
+                            <div class="suggestion-item"><span>🕒</span> photo editor</div>
+                            <div class="suggestion-item"><span>📈</span> kitkat launcher</div>
+                        </div>
+                        <div class="ps-search-results hidden" id="ps-search-results">
+                            <!-- Dynamic results -->
+                        </div>
+                    </div>
+                </div>
+                <!-- App Detail View -->
+                <div id="ps-detail-view" class="hidden">
+                    <div class="ps-detail-header">
+                        <div id="ps-detail-back">←</div>
+                        <span class="ps-title">App Details</span>
+                    </div>
+                    <div class="ps-detail-content">
+                        <div class="ps-app-main-info">
+                            <div id="ps-detail-icon" class="ps-app-icon big">
+                                <img id="ps-detail-icon-img" src="/webpage_default_asset.png" alt="App icon" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">
+                            </div>
+                            <div class="ps-app-text-info">
+                                <div id="ps-detail-name" class="ps-detail-name">App Name</div>
+                                <div id="ps-detail-dev" class="ps-detail-dev"><a id="ps-detail-dev-link" href="#" style="color:inherit;text-decoration:none;">Developer Inc.</a></div>
+                                <div class="ps-detail-meta">
+                                    <span id="ps-detail-rating">4.5</span> <span style="color:#f5c518;">★</span>
+                                    <span style="margin:0 8px;color:#888;">•</span>
+                                    <span id="ps-detail-installs" style="color:#666;">1M+</span>
+                                    <span style="margin:0 8px;color:#888;">•</span>
+                                    <span id="ps-detail-size" style="color:#666;">10MB</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ps-action-bar">
+                            <button id="ps-install-btn">INSTALL</button>
+                            <div id="ps-install-progress" class="hidden">
+                                <div class="progress-track"><div class="progress-fill"></div></div>
+                                <span class="progress-text">Downloading...</span>
+                            </div>
+                        </div>
+                        <div class="ps-detail-screenshots">
+                            <div class="ps-screenshot-placeholder"></div>
+                            <div class="ps-screenshot-placeholder"></div>
+                            <div class="ps-screenshot-placeholder"></div>
+                        </div>
+                        <div class="ps-detail-description">
+                            <strong>Description</strong>
+                            <p id="ps-detail-desc">This is a mock description for the selected application. It features cutting edge technology and a user-friendly interface.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Apps Interface -->
+            <div id="recent-apps-screen" class="hidden">
+                <div id="recent-apps-list">
+                    <!-- Dynamic Recent Apps Cards -->
+                </div>
+                <div id="recent-apps-empty" class="hidden">
+                    No recent apps
+                </div>
+            </div>
+
+            <!-- Hangouts App Interface -->
+            <div id="hangouts-app" class="hidden">
+                <div class="hangouts-header">
+                    <div class="hangouts-top-bar">
+                        <span class="hangouts-title">Hangouts</span>
+                    </div>
+                    <div class="hangouts-tabs">
+                        <div class="hangouts-tab active">CONVERSATIONS</div>
+                        <div class="hangouts-tab">CONTACTS</div>
+                    </div>
+                </div>
+                <div id="hangouts-list-view">
+                    <div class="hangouts-list">
+                        <div class="hangouts-item" data-name="John Doe" data-color="#f44336">
+                            <div class="avatar" style="background-color: #f44336;">J</div>
+                            <div class="hangout-info">
+                                <div class="hangout-name">John Doe</div>
+                                <div class="hangout-snippet">Hey, want to grab lunch?</div>
+                            </div>
+                        </div>
+                        <div class="hangouts-item" data-name="Alice Smith" data-color="#2196f3">
+                            <div class="avatar" style="background-color: #2196f3;">A</div>
+                            <div class="hangout-info">
+                                <div class="hangout-name">Alice Smith</div>
+                                <div class="hangout-snippet">Sent a photo.</div>
+                            </div>
+                        </div>
+                        <div class="hangouts-item" data-name="Bob Wilson" data-color="#4caf50">
+                            <div class="avatar" style="background-color: #4caf50;">B</div>
+                            <div class="hangout-info">
+                                <div class="hangout-name">Bob Wilson</div>
+                                <div class="hangout-snippet">See you later!</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hangouts-fab">
+                        <span>+</span>
+                    </div>
+                </div>
+                <div id="hangouts-chat-view" class="hidden">
+                    <div class="chat-header">
+                        <div id="chat-back" style="font-size: 24px; margin-right: 12px; cursor: pointer;">←</div>
+                        <div id="chat-avatar" class="avatar mini">J</div>
+                        <span id="chat-name">John Doe</span>
+                    </div>
+                    <div class="chat-messages">
+                        <div class="message received">Hey, want to grab lunch?</div>
+                        <div class="message sent">Sure, where?</div>
+                        <div class="message received">How about the place on 5th?</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" placeholder="Send a message...">
+                        <span class="send-icon">➤</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chrome Browser Interface (Hidden by default) -->
+            <div id="chrome-app" class="hidden">
+                <div class="chrome-toolbar">
+                    <div class="chrome-address-bar">
+                        <span class="lock-icon">🔒</span>
+                        <input id="chrome-address-input" type="text" value="https://www.chromium.org" placeholder="Search or enter URL" />
+                        <button id="chrome-go-btn" aria-label="Go" style="margin-left:8px;padding:6px 10px;border-radius:3px;border:none;background:#e0e0e0;cursor:pointer;">Go</button>
+                    </div>
+                </div>
+                <div class="chrome-content">
+                    <iframe id="chrome-iframe"
+                        src="https://www.chromium.org"
+                        style="width:100%;height:100%;border:0;"
+                        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation allow-top-navigation-by-user-activation"
+                        title="Chromium">
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- Maps App -->
+            <div id="maps-app" class="hidden">
+                <div class="maps-header">
+                    <div class="maps-search-box">
+                        <span class="maps-menu">☰</span>
+                        <input type="text" placeholder="Search Google Maps" class="maps-search">
+                        <span class="maps-mic">🎤</span>
+                    </div>
+                </div>
+                <div class="maps-content" style="background-image: url('/maps_map_view.png'); background-size: cover;">
+                    <div class="maps-pin">📍</div>
+                    <div class="maps-fab-location">🎯</div>
+                </div>
+                <div class="maps-footer">
+                    <div class="maps-info-card">
+                        <div class="info-title">Your Location</div>
+                        <div class="info-address">1600 Amphitheatre Pkwy, Mountain View</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pixel Racer Game App -->
+            <div id="pixel-racer-app" class="hidden generic-app">
+                <div class="game-header" style="background:#111;color:#fff;display:flex;align-items:center;padding:8px 12px;">
+                    <div style="font-weight:600;">Pixel Racer</div>
+                    <div style="margin-left:auto;font-size:12px;color:#ccc;">Use ← → to steer, ↑ to accelerate, ↓ to brake</div>
+                </div>
+                <div class="game-container" style="flex:1;display:flex;justify-content:center;align-items:center;background:#222;">
+                    <canvas id="pixel-racer-canvas" width="800" height="450" style="max-width:100%;height:auto;border-radius:6px;box-shadow:0 6px 20px rgba(0,0,0,0.6);"></canvas>
+                </div>
+                <div class="game-footer" style="height:56px;background:#111;display:flex;align-items:center;justify-content:space-between;padding:0 12px;color:#fff;">
+                    <div id="pr-score">Score: 0</div>
+                    <div>
+                        <button id="pr-restart" style="background:#33b5e5;border:none;padding:8px 12px;color:#fff;border-radius:4px;cursor:pointer;">Restart</button>
+                        <button id="pr-exit" style="background:#666;border:none;padding:8px 12px;color:#fff;border-radius:4px;cursor:pointer;margin-left:8px;">Exit</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gmail App -->
+            <div id="gmail-app" class="hidden generic-app">
+                <div class="gmail-header">
+                    <div class="gmail-top">
+                        <span class="gmail-menu" id="gmail-drawer-trigger">☰</span>
+                        <span class="gmail-title">Primary</span>
+                        <div class="gmail-header-icons">🔍</div>
+                    </div>
+                </div>
+                <div class="gmail-list">
+                    <div class="gmail-item unread">
+                        <div class="gmail-avatar" style="background:#db4437">G</div>
+                        <div class="gmail-body">
+                            <div class="gmail-line-1">
+                                <span class="gmail-sender">Google Team</span>
+                                <span class="gmail-time">11:32 AM</span>
+                            </div>
+                            <div class="gmail-subject">A fresh new look for Android</div>
+                            <div class="gmail-snippet">Welcome to Android 4.4 KitKat. We've simplified things...</div>
+                        </div>
+                        <div class="gmail-star">☆</div>
+                    </div>
+                    <div class="gmail-item">
+                        <div class="gmail-avatar" style="background:#4285f4">N</div>
+                        <div class="gmail-body">
+                            <div class="gmail-line-1">
+                                <span class="gmail-sender">Nexus 5 Support</span>
+                                <span class="gmail-time">Yesterday</span>
+                            </div>
+                            <div class="gmail-subject">Your new device is ready</div>
+                            <div class="gmail-snippet">Thank you for choosing Nexus. Here are some tips to get started...</div>
+                        </div>
+                        <div class="gmail-star">☆</div>
+                    </div>
+                    <div class="gmail-item">
+                        <div class="gmail-avatar" style="background:#f4b400">Y</div>
+                        <div class="gmail-body">
+                            <div class="gmail-line-1">
+                                <span class="gmail-sender">YouTube</span>
+                                <span class="gmail-time">Nov 10</span>
+                            </div>
+                            <div class="gmail-subject">New video from Daft Punk</div>
+                            <div class="gmail-snippet">Daft Punk just uploaded: "Get Lucky" Official Video. Check it out now.</div>
+                        </div>
+                        <div class="gmail-star">★</div>
+                    </div>
+                </div>
+                <div class="gmail-fab">✏️</div>
+                <div id="gmail-drawer" class="hidden">
+                    <div class="drawer-user-info">
+                        <div class="user-avatar" style="background:#673ab7">J</div>
+                        <div class="user-name">John Doe</div>
+                        <div class="user-email">john.doe@gmail.com</div>
+                    </div>
+                    <div class="drawer-items">
+                        <div class="drawer-item active">📥 Primary</div>
+                        <div class="drawer-item">🏷️ Social</div>
+                        <div class="drawer-item">🏷️ Promotions</div>
+                        <div class="drawer-divider"></div>
+                        <div class="drawer-item">⭐ Starred</div>
+                        <div class="drawer-item">📤 Sent</div>
+                        <div class="drawer-item">📝 Drafts</div>
+                        <div class="drawer-item">🗑️ Trash</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WhatsApp App -->
+            <div id="whatsapp-app" class="hidden">
+                <div class="whatsapp-header">
+                    <div class="wa-top">
+                        <span class="wa-title">WhatsApp</span>
+                        <div class="wa-icons">
+                            <span class="wa-icon-search">🔍</span>
+                            <span class="wa-icon-chat">💬</span>
+                            <span class="wa-icon-menu">⋮</span>
+                        </div>
+                    </div>
+                    <div class="wa-tabs">
+                        <div class="wa-tab active" data-tab="chats">CHATS</div>
+                        <div class="wa-tab" data-tab="status">STATUS</div>
+                        <div class="wa-tab" data-tab="calls">CALLS</div>
+                    </div>
+                </div>
+                <div id="wa-view-chats" class="wa-view">
+                    <div class="wa-content">
+                        <!-- Chat list generated in main.js -->
+                    </div>
+                </div>
+                <div id="wa-view-status" class="wa-view hidden">
+                    <div class="wa-status-list">
+                        <div class="wa-item">
+                            <div class="avatar-container">
+                                <div class="avatar" style="background: #ccc; color: white;">+</div>
+                            </div>
+                            <div class="wa-info">
+                                <div class="wa-name">My status</div>
+                                <div class="wa-msg">Tap to add status update</div>
+                            </div>
+                        </div>
+                        <div class="wa-section-label">RECENT UPDATES</div>
+                        <div class="wa-item">
+                            <div class="avatar-container status-ring">
+                                <div class="avatar" style="background: #128c7e">J</div>
+                            </div>
+                            <div class="wa-info">
+                                <div class="wa-name">John Doe</div>
+                                <div class="wa-msg">Just now</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="wa-view-calls" class="wa-view hidden">
+                    <div class="wa-empty-state">
+                        <div class="wa-empty-icon">📞</div>
+                        <div class="wa-empty-text">To start calling contacts who have WhatsApp, tap the icon at the top of your screen.</div>
+                    </div>
+                </div>
+                <div class="wa-fab">💬</div>
+            </div>
+
+            <!-- Facebook App -->
+            <div id="facebook-app" class="hidden">
+                <div class="fb-header">
+                    <div class="fb-top">
+                        <div class="fb-search-bar">🔍 Search</div>
+                        <div class="fb-msg-icon">💬</div>
+                    </div>
+                    <div class="fb-tabs">
+                        <div class="fb-tab active" data-tab="feed">📰</div>
+                        <div class="fb-tab" data-tab="friends">👥</div>
+                        <div class="fb-tab" data-tab="notifs">🔔</div>
+                        <div class="fb-tab" data-tab="menu">≡</div>
+                    </div>
+                </div>
+                <div id="fb-view-feed" class="fb-view fb-content">
+                    <!-- Feed generated in main.js -->
+                </div>
+                <div id="fb-view-friends" class="fb-view fb-content hidden">
+                    <div style="padding: 16px; text-align: center; color: #666;">No pending friend requests.</div>
+                </div>
+                <div id="fb-view-notifs" class="fb-view fb-content hidden">
+                    <div style="padding: 16px; text-align: center; color: #666;">You're all caught up!</div>
+                </div>
+                <div id="fb-view-menu" class="fb-view fb-content hidden">
+                    <div style="background:white; margin:8px; border-radius:4px; overflow:hidden;">
+                        <div style="padding:16px; border-bottom:1px solid #eee; display:flex; align-items:center; gap:12px;">
+                            <div class="avatar mini" style="background:#3b5998">Y</div>
+                            <strong>You</strong>
+                        </div>
+                        <div style="padding:16px; border-bottom:1px solid #eee;">Find Friends</div>
+                        <div style="padding:16px; border-bottom:1px solid #eee;">Groups</div>
+                        <div style="padding:16px; border-bottom:1px solid #eee;">Pages</div>
+                        <div style="padding:16px;">Settings & Privacy</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messenger App -->
+            <div id="messenger-app" class="hidden">
+                <div class="messenger-header">
+                    <span class="messenger-title">Messenger</span>
+                    <div class="messenger-icons">🔍 ➕</div>
+                </div>
+                <div class="messenger-list">
+                    <div class="messenger-item">
+                        <div class="avatar" style="background: #3f51b5">J</div>
+                        <div class="messenger-body">
+                            <div class="messenger-top">
+                                <span class="messenger-sender">John Doe</span>
+                                <span class="messenger-time">12:45 PM</span>
+                            </div>
+                            <div class="messenger-snippet">Are we still meeting at 5?</div>
+                        </div>
+                    </div>
+                    <div class="messenger-item">
+                        <div class="avatar" style="background: #e91e63">M</div>
+                        <div class="messenger-body">
+                            <div class="messenger-top">
+                                <span class="messenger-sender">Mom</span>
+                                <span class="messenger-time">Yesterday</span>
+                            </div>
+                            <div class="messenger-snippet">Don't forget to buy milk on your way home.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email App Interface -->
+            <div id="email-app" class="hidden generic-app">
+                <div class="email-header-bar">
+                    <span class="email-title">Inbox</span>
+                    <div class="email-icons">🔍 📧</div>
+                </div>
+                <div class="email-list">
+                    <div class="email-item">
+                        <div class="email-avatar">A</div>
+                        <div class="email-content">
+                            <div class="email-top"><span>Amazon.com</span> <span>Nov 13</span></div>
+                            <div class="email-sub">Your order has shipped!</div>
+                            <div class="email-snippet">Great news! Your package is on its way...</div>
+                        </div>
+                    </div>
+                    <div class="email-item unread">
+                        <div class="email-avatar" style="background:#4285f4">L</div>
+                        <div class="email-content">
+                            <div class="email-top"><span>LinkedIn</span> <span>10:15 AM</span></div>
+                            <div class="email-sub">New job opportunities for you</div>
+                            <div class="email-snippet">Based on your profile, we found 5 new roles...</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="email-fab">➕</div>
+            </div>
+
+            <!-- Play Music App -->
+            <div id="play-music-app" class="hidden generic-app">
+                <div class="music-header">
+                    <div class="music-top">☰ Listen Now <span style="float:right">🔍</span></div>
+                    <div class="music-tabs">
+                        <div class="music-tab active">GENRES</div>
+                        <div class="music-tab">ARTISTS</div>
+                        <div class="music-tab">ALBUMS</div>
+                    </div>
+                </div>
+                <div class="music-grid">
+                    <div class="music-card">
+                        <div class="music-art" style="background:#ff9800"></div>
+                        <div class="music-info">Electronic</div>
+                    </div>
+                    <div class="music-card">
+                        <div class="music-art" style="background:#2196f3"></div>
+                        <div class="music-info">Rock</div>
+                    </div>
+                    <div class="music-card">
+                        <div class="music-art" style="background:#e91e63"></div>
+                        <div class="music-info">Pop</div>
+                    </div>
+                </div>
+                <div class="now-playing-bar">
+                    <div class="now-playing-info">
+                        <strong>Get Lucky</strong>
+                        <span>Daft Punk</span>
+                    </div>
+                    <div class="now-playing-ctrl">⏯</div>
+                </div>
+            </div>
+
+            <!-- Play Books App -->
+            <div id="play-books-app" class="hidden generic-app">
+                <div class="books-header">
+                    <span class="books-title">My Books</span>
+                    <span style="margin-left:auto">🔍 ⋮</span>
+                </div>
+                <div class="books-shelf">
+                    <div class="book-item">
+                        <div class="book-cover" style="background:#1a237e"></div>
+                        <div class="book-name">Android Design</div>
+                    </div>
+                    <div class="book-item">
+                        <div class="book-cover" style="background:#311b92"></div>
+                        <div class="book-name">The Holo Guide</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Play Games App -->
+            <div id="play-games-app" class="hidden generic-app">
+                <div class="games-header">
+                    <div class="games-top">Play Games</div>
+                    <div class="games-tabs">
+                        <div class="games-tab active">MATCHES</div>
+                        <div class="games-tab">PLAY NOW</div>
+                        <div class="games-tab">MY GAMES</div>
+                    </div>
+                </div>
+                <div class="games-content">
+                    <div class="game-promo-card">
+                        <div class="promo-header">Recommended for You</div>
+                        <div class="promo-body">
+                            <div class="promo-icon" style="background:#4caf50"></div>
+                            <div class="promo-text">
+                                <strong>Pixel Racer</strong>
+                                <span>Challenge your friends!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Google+ App -->
+            <div id="googleplus-app" class="hidden">
+                <div class="gplus-header">
+                    <div class="gplus-top">
+                        <span class="gplus-menu">☰</span>
+                        <span class="gplus-title">Google+</span>
+                        <span class="gplus-icons">🔔 ✉️</span>
+                    </div>
+                    <div class="gplus-tabs">
+                        <div class="gplus-tab active">ALL</div>
+                        <div class="gplus-tab">COMMUNITIES</div>
+                    </div>
+                </div>
+                <div class="gplus-content">
+                    <div class="gplus-post">
+                        <div class="post-header">
+                            <div class="avatar mini" style="background: #4285f4">G</div>
+                            <div class="post-meta">
+                                <div class="post-author">Google Developers</div>
+                                <div class="post-time">2 hours ago - Public</div>
+                            </div>
+                        </div>
+                        <div class="post-text">Check out the new features in Android 4.4 KitKat! Translucent system UI, immersive mode, and more.</div>
+                        <div class="post-image" style="background-image: url('/google_plus_post_1.png')"></div>
+                        <div class="post-actions">
+                            <span>+1 4.2k</span>
+                            <span>Share</span>
+                            <span>💬 156</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Google App Interface (Holo Google Now Style) -->
+            <div id="google-app" class="hidden">
+                <div class="google-now-container">
+                    <div class="google-now-header">
+                        <div class="gn-search-box">
+                            <img src="/google_icon_appdrawer.png" class="gn-logo" alt="G">
+                            <input type="text" id="google-app-search-input" placeholder="Google">
+                            <span class="gn-mic">🎤</span>
+                        </div>
+                    </div>
+                    <div class="google-now-content">
+                        <div class="gn-card weather-card">
+                            <div class="gn-card-header">Mountain View</div>
+                            <div class="gn-card-body">
+                                <div class="weather-main">
+                                    <span class="temp">72°</span>
+                                    <span class="condition">Sunny</span>
+                                </div>
+                                <div class="weather-details">Humidity: 45% • Wind: 5 mph</div>
+                            </div>
+                        </div>
+                        <div class="gn-card commute-card">
+                            <div class="gn-card-header">Commute to Home</div>
+                            <div class="gn-card-body">
+                                <div class="commute-info">
+                                    <span class="commute-time">24 min</span>
+                                    <span class="commute-status">Light traffic on US-101 S</span>
+                                </div>
+                                <div class="gn-card-action">NAVIGATE</div>
+                            </div>
+                        </div>
+                        <div class="gn-card news-card">
+                            <img src="/google_news_1.png" class="gn-card-img" alt="News">
+                            <div class="gn-card-body">
+                                <div class="gn-card-title">Nexus 5: The pure Android experience</div>
+                                <div class="gn-card-desc">Google's latest flagship redefined value with top-tier specs and a clean software experience...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Search Results Overlay -->
+                <div id="google-app-results" class="hidden">
+                    <div class="results-header">
+                        <div class="results-search-bar">
+                            <span id="results-query">Query</span>
+                        </div>
+                    </div>
+                    <div class="results-content">
+                        <div class="result-item">
+                            <div class="res-title">Android KitKat 4.4 - Official Site</div>
+                            <div class="res-url">android.com/kitkat</div>
+                            <div class="res-desc">Experience Android 4.4 KitKat. Beautifully designed, remarkably smart.</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="res-title">The history of Android versions</div>
+                            <div class="res-url">techradar.com/android-history</div>
+                            <div class="res-desc">From Cupcake to KitKat, see how Google's mobile OS has evolved over the years.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- YouTube App Interface -->
+            <div id="youtube-app" class="hidden">
+                <div class="youtube-header">
+                    <div class="yt-top">
+                        <div id="yt-guide-trigger" class="yt-menu-btn">☰</div>
+                        <img src="/youtube_icon_appdrawer.png" class="yt-logo" alt="YouTube">
+                        <div class="yt-header-icons">
+                            <span id="yt-search-trigger">🔍</span>
+                            <span>⋮</span>
+                        </div>
+                    </div>
+                    <div class="yt-search-bar-hidden" id="yt-search-bar">
+                        <span id="yt-search-back">←</span>
+                        <input id="yt-search-input" type="text" placeholder="Search YouTube" />
+                        <span id="yt-search-clear">✕</span>
+                    </div>
+                    <div class="yt-tabs">
+                        <div class="yt-tab active" data-view="home">WHAT TO WATCH</div>
+                        <div class="yt-tab" data-view="subs">SUBSCRIPTIONS</div>
+                    </div>
+                </div>
+
+                <!-- YouTube Guide Drawer -->
+                <div id="yt-guide" class="yt-guide-hidden">
+                    <div class="yt-guide-content">
+                        <div class="yt-guide-section">
+                            <div class="yt-guide-item active"><span class="yt-guide-icon">🏠</span> Home</div>
+                            <div class="yt-guide-item"><span class="yt-guide-icon">🔥</span> Trending</div>
+                            <div class="yt-guide-item"><span class="yt-guide-icon">📺</span> Subscriptions</div>
+                        </div>
+                        <div class="yt-guide-divider"></div>
+                        <div class="yt-guide-section">
+                            <div class="yt-guide-header">LIBRARY</div>
+                            <div class="yt-guide-item"><span class="yt-guide-icon">⏳</span> History</div>
+                            <div class="yt-guide-item"><span class="yt-guide-icon">🕒</span> Watch Later</div>
+                            <div class="yt-guide-item"><span class="yt-guide-icon">👍</span> Liked videos</div>
+                        </div>
+                    </div>
+                    <div class="yt-guide-overlay"></div>
+                </div>
+
+                <!-- Home / Listings -->
+                <div id="yt-home-view" class="youtube-content">
+                    <div class="video-card" data-title="Daft Punk - Get Lucky (Official Audio)" data-channel="Daft Punk" data-stats="500M views • 1 year ago" data-img="/youtube_thumb_2.png" data-video-id="Q9t9G0Z7KxI">
+                        <div class="video-thumb" style="background-image: url('/youtube_thumb_2.png');">
+                            <span class="video-duration">4:08</span>
+                        </div>
+                        <div class="video-info">
+                            <div class="channel-avatar" style="background-color: #f44336;">D</div>
+                            <div class="video-text">
+                                <div class="video-title">Daft Punk - Get Lucky (Official Audio)</div>
+                                <div class="video-subtext">Daft Punk • 500M views • 1 year ago</div>
+                            </div>
+                            <div class="video-options">⋮</div>
+                        </div>
+                    </div>
+                    <div class="video-card" data-title="Nexus 5 Official Introduction" data-channel="Google" data-stats="10M views • 6 months ago" data-img="/youtube_thumb_1.png" data-video-id="dQw4w9WgXcQ">
+                        <div class="video-thumb" style="background-image: url('/youtube_thumb_1.png');">
+                            <span class="video-duration">1:32</span>
+                        </div>
+                        <div class="video-info">
+                            <div class="channel-avatar" style="background-color: #4285f4;">G</div>
+                            <div class="video-text">
+                                <div class="video-title">Nexus 5 Official Introduction</div>
+                                <div class="video-subtext">Google • 10M views • 6 months ago</div>
+                            </div>
+                            <div class="video-options">⋮</div>
+                        </div>
+                    </div>
+                    <div class="video-card" data-title="How to bake a KitKat cake" data-channel="BakingPro" data-stats="2M views • 2 weeks ago" data-img="/gallery_icon_appdrawer.png" data-video-id="3JZ_D3ELwOQ">
+                        <div class="video-thumb" style="background-image: url('/gallery_icon_appdrawer.png');">
+                            <span class="video-duration">12:45</span>
+                        </div>
+                        <div class="video-info">
+                            <div class="channel-avatar" style="background-color: #ff9800;">B</div>
+                            <div class="video-text">
+                                <div class="video-title">How to bake a KitKat cake</div>
+                                <div class="video-subtext">BakingPro • 2M views • 2 weeks ago</div>
+                            </div>
+                            <div class="video-options">⋮</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="yt-trending-view" class="youtube-content hidden">
+                    <div class="video-item" data-title="World Cup 2014 Highlights" data-stats="FIFA • 80M views" data-img="/play_videos_icon_appdrawer.png" data-video-id="tVj0ZTS4WF4">
+                        <div class="video-thumb" style="background-image: url('/play_videos_icon_appdrawer.png');"></div>
+                        <div class="video-meta">
+                            <div class="video-title">World Cup 2014 Highlights</div>
+                            <div class="video-stats">FIFA • 80M views • 2 days ago</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="yt-subs-view" class="youtube-content hidden">
+                    <div class="empty-state">No new subscriptions found.</div>
+                </div>
+
+                <!-- Player view: uses an embedded iframe for a realistic player -->
+                <div id="yt-player-view" class="hidden">
+                    <div class="yt-video-area" id="yt-main-player">
+                        <div class="yt-spinner"></div>
+                        <div id="yt-iframe-container" class="yt-iframe-container"></div>
+                        <div class="yt-player-controls">
+                            <div class="yt-seek-bar"><div class="yt-seek-fill"></div></div>
+                            <div class="yt-play-pause" id="yt-toggle-play">⏸</div>
+                        </div>
+                    </div>
+                    <div class="yt-video-info">
+                        <div id="yt-player-title" class="video-title" style="font-size: 18px;">Video Title</div>
+                        <div id="yt-player-stats" class="video-stats">Stats here</div>
+                        <div class="yt-video-actions">
+                            <div class="yt-action-btn"><span>👍</span> 12K</div>
+                            <div class="yt-action-btn"><span>👎</span> 45</div>
+                            <div class="yt-action-btn"><span>↪️</span> SHARE</div>
+                            <div class="yt-action-btn"><span>➕</span> ADD TO</div>
+                        </div>
+                    </div>
+                    <div class="yt-up-next">
+                        <div class="up-next-title">Up Next</div>
+                        <div class="yt-small-item">
+                            <div class="small-thumb" style="background-image: url('/youtube_thumb_1.png');"></div>
+                            <div class="small-meta">
+                                <div class="small-title">Next Big Thing 2014</div>
+                                <div class="small-author">Future Tech</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="yt-comments-preview">
+                        <div class="comments-header">Comments • 234</div>
+                        <div class="comment-item">
+                            <div class="avatar mini" style="background:#673ab7">U</div>
+                            <div class="comment-text">Great video! I love this song.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Home Screen Content -->
+            <div id="home-screen">
+                <div id="google-search">
+                    <img src="/search_bar_google.png" alt="Google Search">
+                </div>
+
+                <!-- Widgets Layer -->
+                <div id="home-widgets-container">
+                    <div id="widget-clock" class="widget-placed hidden">
+                        <div class="widget-clock-content">12:00</div>
+                    </div>
+                    <div id="widget-power" class="widget-placed hidden">
+                        <div class="power-row">
+                            <div class="p-btn active">📶</div><div class="p-btn active">📡</div><div class="p-btn">✈️</div><div class="p-btn active">🔄</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="app-grid-container">
+                    <div class="app-page" id="page-1">
+                        <div class="app-icon-container" id="google-apps-group-home">
+                            <img src="/google_apps_group.png" class="app-icon" alt="Google Apps">
+                        </div>
+                        <div class="app-icon-container" id="play-store-home">
+                            <img src="/play_store_icon_with_text.png" class="app-icon" alt="Play Store">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page Indicators -->
+                <div id="page-indicators">
+                    <img src="/current_app_page.png" class="page-dot active" alt="Page 1">
+                    <img src="/following_app_page.png" class="page-dot" alt="Page 2">
+                </div>
+            </div>
+
+            <!-- App Drawer Overlay -->
+            <div id="app-drawer" class="hidden">
+                <div class="drawer-header">
+                    <span class="tab active" data-target="apps-grid">APPS</span>
+                    <span class="tab" data-target="widgets-grid">WIDGETS</span>
+                </div>
+                <div id="apps-grid" class="drawer-grid">
+                  <div class="drawer-item" data-app="calculator"><img src="/calculator_icon_appdrawer.png"><span>Calculator</span></div>
+                  <div class="drawer-item" data-app="calendar"><img src="/calendar_icon_appdrawer.png"><span>Calendar</span></div>
+                  <div class="drawer-item" data-app="camera"><img src="/camera_icon_appdrawer.png"><span>Camera</span></div>
+                  <div class="drawer-item" data-app="chrome"><img src="/chrome_icon_appdrawer.png"><span>Chrome</span></div>
+                  <div class="drawer-item" data-app="clock"><img src="/clock_icon_appdrawer.png"><span>Clock</span></div>
+                  <div class="drawer-item" data-app="downloads"><img src="/downloads_icon_appdrawer.png"><span>Downloads</span></div>
+                  <div class="drawer-item" data-app="email"><img src="/email_icon_appdrawer.png"><span>Email</span></div>
+                  <div class="drawer-item" data-app="gallery"><img src="/gallery_icon_appdrawer.png"><span>Gallery</span></div>
+                  <div class="drawer-item" data-app="gmail"><img src="/gmail_icon_appdrawer.png"><span>Gmail</span></div>
+                  <div class="drawer-item" data-app="google"><img src="/google_icon_appdrawer.png"><span>Google</span></div>
+                  <div class="drawer-item" data-app="messenger"><img src="/google_messenger_icon_appdrawer.png"><span>Messenger</span></div>
+                  <div class="drawer-item" data-app="googleplus"><img src="/googleplus_icon_appdrawer.png"><span>Google+</span></div>
+                  <div class="drawer-item" data-app="maps"><img src="/maps_icon_appdrawer.png"><span>Maps</span></div>
+                  <div class="drawer-item" data-app="play_books"><img src="/play_books_icon_appdrawer.png"><span>Play Books</span></div>
+                  <div class="drawer-item" data-app="play_games"><img src="/play_games_icon_appdrawer.png"><span>Play Games</span></div>
+                  <div class="drawer-item" data-app="play_music"><img src="/play_music_icon_appdrawer.png"><span>Play Music</span></div>
+                  <div class="drawer-item" data-app="play_movies"><img src="/play_videos_icon_appdrawer.png"><span>Play Movies</span></div>
+                  <div class="drawer-item" data-app="settings"><img src="/settings_icon_appdrawer.png"><span>Settings</span></div>
+                  <div class="drawer-item" data-app="youtube"><img src="/youtube_icon_appdrawer.png"><span>YouTube</span></div>
+                  <div class="drawer-item" data-app="facebook"><img src="/facebook_icon.png"><span>Facebook</span></div>
+                  <div class="drawer-item" data-app="whatsapp"><img src="/whatsapp_icon.png"><span>WhatsApp</span></div>
+                </div>
+                <div id="widgets-grid" class="drawer-grid hidden">
+                    <div class="widget-item">
+                        <div class="widget-preview" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);"><div style="font-size:10px; color:#33b5e5; font-weight:bold;">12:00</div></div>
+                        <span>Analog clock (2x2)</span>
+                    </div>
+                    <div class="widget-item">
+                        <div class="widget-preview" style="background-image: url('/search_bar_google.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                        <span>Google Search (4x1)</span>
+                    </div>
+                    <div class="widget-item">
+                        <div class="widget-preview" style="background: rgba(51, 181, 229, 0.2); border: 1px dashed #33b5e5;"></div>
+                        <span>Calendar (3x3)</span>
+                    </div>
+                    <div class="widget-item">
+                        <div class="widget-preview" style="background: rgba(255,255,255,0.1); display: flex; gap: 4px; padding: 4px; align-items: center;">
+                            <div style="width:10px;height:10px;background:#33b5e5;border-radius:50%;"></div>
+                            <div style="width:10px;height:10px;background:#33b5e5;border-radius:50%;"></div>
+                            <div style="width:10px;height:10px;background:#33b5e5;border-radius:50%;"></div>
+                        </div>
+                        <span>Power control (4x1)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dock -->
+            <div id="dock">
+                <img src="/phone_icon_dock.png" class="dock-icon" data-app="phone" alt="Phone">
+                <img src="/hangouts_icon_dock.png" class="dock-icon" data-app="hangouts" alt="Hangouts">
+                <img src="/app_drawer_icon_dock.png" class="dock-icon" id="app-drawer-trigger" alt="Apps">
+                <img src="/chrome_icon_dock.png" class="dock-icon" data-app="chrome" alt="Chrome">
+                <img src="/camera_dock.png" class="dock-icon" data-app="camera" alt="Camera">
+            </div>
+
+            <!-- Navigation Bar -->
+            <div id="nav-bar">
+                <img src="/back_navbar.png" class="nav-icon" id="nav-back" alt="Back">
+                <img src="/home_navbar.png" class="nav-icon" id="nav-home" alt="Home">
+                <img src="/recent_apps_navbar.png" class="nav-icon" id="nav-recent" alt="Recent">
+            </div>
+        </div>
+    </div>
+
+    <!-- On-screen AOSP keyboard -->
+    <div id="aosp-keyboard" class="hidden" aria-hidden="true" data-shift="0" data-symbol="0">
+        <div class="kbd-row r1">
+            <button class="kbd-key k" data-key="q">q</button>
+            <button class="kbd-key k" data-key="w">w</button>
+            <button class="kbd-key k" data-key="e">e</button>
+            <button class="kbd-key k" data-key="r">r</button>
+            <button class="kbd-key k" data-key="t">t</button>
+            <button class="kbd-key k" data-key="y">y</button>
+            <button class="kbd-key k" data-key="u">u</button>
+            <button class="kbd-key k" data-key="i">i</button>
+            <button class="kbd-key k" data-key="o">o</button>
+            <button class="kbd-key k" data-key="p">p</button>
+        </div>
+        <div class="kbd-row r2">
+            <button class="kbd-key k" data-key="a">a</button>
+            <button class="kbd-key k" data-key="s">s</button>
+            <button class="kbd-key k" data-key="d">d</button>
+            <button class="kbd-key k" data-key="f">f</button>
+            <button class="kbd-key k" data-key="g">g</button>
+            <button class="kbd-key k" data-key="h">h</button>
+            <button class="kbd-key k" data-key="j">j</button>
+            <button class="kbd-key k" data-key="k">k</button>
+            <button class="kbd-key k" data-key="l">l</button>
+            <button class="kbd-key special" data-key="backspace">⌫</button>
+        </div>
+        <div class="kbd-row r3">
+            <button class="kbd-key special" data-key="shift">⇧</button>
+            <button class="kbd-key k" data-key="z">z</button>
+            <button class="kbd-key k" data-key="x">x</button>
+            <button class="kbd-key k" data-key="c">c</button>
+            <button class="kbd-key k" data-key="v">v</button>
+            <button class="kbd-key k" data-key="b">b</button>
+            <button class="kbd-key k" data-key="n">n</button>
+            <button class="kbd-key k" data-key="m">m</button>
+            <button class="kbd-key special" data-key="enter">⏎</button>
+        </div>
+        <div class="kbd-row r4">
+            <button class="kbd-key special" data-key="symbol">?123</button>
+            <button class="kbd-key wide" data-key="space">Space</button>
+            <button class="kbd-key special" data-key="emoji">😊</button>
+            <button class="kbd-key special" data-key="done">Done</button>
+        </div>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
